@@ -26,18 +26,19 @@ function clickControl (event) {
     };
 };
 
-// общая игровая логика
+// класс общей игровой логики
 class GameManager {
     constructor(isGameOver, score, board) {
-        this.isGameOver = false;
-        this.score = 0;
-        this.board = null;
+        this.isGameOver = false; //конец игры
+        this.score = 0; //счет
+        this.board = null; // доска
     };
 
     init() {
-        this.board = new Board();
-        this.board.init();
-        document.addEventListener('keyup', clickControl);
+        this.board = new Board(); // создаем экземпляр класса Board
+        this.board.init(); // вызываем метод класса Board, создающий игровое поле
+        this.board.generateNewCell(); // заполняем первую ячейку
+        document.addEventListener('keyup', clickControl); // подписываемся на клик
     };
 
     checkGameOver() {
@@ -45,42 +46,56 @@ class GameManager {
     };
 }
 
-// логика игрового поля
+// класс логики игрового поля
 class Board {
-    constructor(widthBoard, scuares, wrapper) {
-        this.widthBoard = 4;
-        this.scuares = [];
-        this.wrapper = document.querySelector('.grid');
+    constructor(widthBoard, squares, wrapper) {
+        this.widthBoard = 4; // ширина поля
+        this.squares = []; // ячейки
+        this.wrapper = document.querySelector('.grid'); //ссылка на контейнер
     };
 
 // содает игровое поле
     init() {
-        const fragment = document.createDocumentFragment();
+
+        const fragment = document.createDocumentFragment(); // создаем новый пустой фрагмент
 
         for (let i = 0; i < this.widthBoard * this.widthBoard; i++) {
-            const divCell = document.createElement('div');
-            divCell.className = 'cell';
-            divCell.innerHTML = '';
-            this.wrapper.append(divCell);
-            this.scuares.push(divCell);
+            const cell = new Cell; //создаем новый экземпляр класса Cell
+            fragment.appendChild(cell.getNewElement()); // добавляем созданную ячейку 
+            this.squares.push(cell.getNewElement()); // добавляем див в массив
         }
+        this.wrapper.appendChild(fragment);
     };
 
-// генерирует новые ячейки
+// Заполнение пустой ячейки новым значением
     generateNewCell() {
-        console.log('generateNewCell');
-    };
+        const randomNumber = Math.floor(Math.random() * this.squares.length); // получаем случайное число от 0-3
 
-// добавляет цвет ячейкам
-    addColours() {
-
+        if (this.squares[randomNumber].innerHTML === '') { // если ячейка пустая записываем 2
+            this.squares[randomNumber].innerHTML = 2;
+            this.addColours(); //добавляем ячейке цвет
+            // проверить на GameOver
+        } else {
+            //generateNewCell(); // если ячека занята снова вызываем метод
+        }
     }
+    
+
+// Добавление цвета ячейкам с цифрами
+    addColours() {
+        for (let i = 0; i < this.squares.length; i++) {
+            console.log(this.squares[i]);
+            this.squares[i].style.backgroundColor = colorCell[Math.trunc(Math.sqrt(this.squares[i].innerHTML))];
+        }
+    }
+
 }
 
-// параметры ячейки
+
+//  класс параметров ячейки
 class Cell {
     constructor(value, dom) {
-        this.value = '';
+        this.value = ''; //значение ячейки
         this.dom = null;
     }
 
@@ -92,8 +107,15 @@ setValue() {
     console.log(setValue);
 }
 
+// создание новой ячейки
 getNewElement() {
-    console.log(getNewElement); 
+    const square = document.createElement('div'); // создаем новый пустой див
+    square.innerHTML = ''; // записываем в него пустое значение
+    //this.value = ''; // записываем в него пустое значение
+    square.className = 'cell'; //присваиваем класс
+    this.dom = square; 
+
+    return square; 
 }
 }
 
